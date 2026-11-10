@@ -1,77 +1,89 @@
-# Desafio 03 — Modelo de registro de medições
+# Desafio 03 - Registro de medições
 
-Preencha as tabelas à medida que executar cada prompt. Obtenha as contagens de tokens em
-`Exibir → Saída → "GitHub Copilot Chat"` (View → Output na interface em inglês) e/ou na sua visualização de uso do Copilot. Se as contagens exatas por solicitação
-não forem mostradas, registre *aproximadamente* quanto texto a mais o modelo premium produziu.
+Preencha durante o [Desafio 03](../../Challenge-03.md). Registre apenas métricas exibidas pela sua interface. Use “não disponível” quando não houver medição atribuível à execução.
 
-> As contagens de tokens variam entre execuções (especialmente nos modelos premium de raciocínio). Concentre-se no **padrão /
-> proporção**, não no número absoluto.
+## Configuração
 
-Registre os nomes dos modelos de **nível básico** e **nível premium** que você realmente usou:
+- Data:
+- Versão do VS Code e do Copilot:
+- Modo do chat:
+- Modelo A e condições de cobrança:
+- Modelo B e condições de cobrança:
+- Instruções e anexos presentes em ambas as execuções:
+- Fonte e escopo das métricas:
 
-- Modelo básico: `____________________`
-- Modelo premium: `____________________`
+Não estime tokens pelo tamanho do texto. Diferencie tokens de entrada, saída, cache e total informado, quando a interface apresentar essas categorias. A ocupação da janela não representa o consumo total.
 
----
+## Parte 1 - Ordenação de versões
 
-## Parte 1 — Tarefa fácil (ordenação de versões)
-
-| | Modelo básico | Modelo premium |
+| Critério | Modelo A | Modelo B |
 |---|---|---|
 | Resposta fornecida | | |
-| Correto? (S/N) | | |
-| Total de tokens | | |
+| Ordem correta? | | |
+| Formato correto? | | |
+| Tokens de entrada | | |
+| Tokens de saída | | |
+| Outras métricas de tokens, com unidade | | |
+| Créditos da execução | | |
+| Tempo aproximado | | |
 
-**Observação:** _Ambos acertaram? Qual usou menos tokens para a mesma resposta?_
+Qual modelo você escolheria para repetir esta tarefa? Que evidência sustenta a decisão?
 
----
+## Parte 2 - Esclarecimento do produto
 
-## Parte 2 — Tarefa difícil (o lava-rápido)
+Escala: 0 = não atendeu; 1 = atendeu parcialmente; 2 = atendeu claramente.
 
-| | Modelo básico | Modelo premium |
+| Critério | A (0 a 2) | Evidência de A | B (0 a 2) | Evidência de B |
+|---|---|---|---|---|
+| Respeito às instruções | | | | |
+| Utilidade das perguntas | | | | |
+| Tratamento de incerteza | | | | |
+| Qualidade dos riscos | | | | |
+| Relação com o domínio | | | | |
+| **Total, até 10 pontos** | | | | |
+
+| Medição | Modelo A | Modelo B |
 |---|---|---|
-| Resposta (ir a pé / ir de carro) | | |
-| Correto? (S/N) | | |
-| Total de tokens | | |
+| Tokens de entrada | | |
+| Tokens de saída | | |
+| Outras métricas de tokens, com unidade | | |
+| Créditos da execução | | |
+| Tempo aproximado | | |
 
-**Observação:** _O modelo básico disse "ir a pé"? Cada tentativa teve baixo custo — mas foi útil?_
+Que resposta ajudaria mais a esclarecer o produto? Por quê?
 
-### Reflexão sobre o custo das novas tentativas
+## Parte 3 - Decisão
 
-- Custo do modelo básico por tentativa: `__________`  |  Custo do modelo premium (uma chamada): `__________`
-- **Quantas tentativas do modelo básico equivalem a uma chamada premium?** `__________`
-- Nesta tarefa, *alguma* quantidade de tentativas do modelo básico obteria a resposta certa de forma confiável? `__________`
+| Tarefa | Resultado de A | Consumo de A e unidade | Resultado de B | Consumo de B e unidade | Escolha justificada |
+|---|---|---|---|---|---|
+| Ordenação | | | | | |
+| Esclarecimento | | | | | |
 
----
+1. Quais conclusões são sustentadas pelas medições?
+2. Quais métricas faltaram?
+3. Que erro poderia exigir mais retrabalho?
+4. O que seria necessário para avaliar confiabilidade em mais execuções?
 
-## Opcional — Restrição de saída (tarefa com resposta detalhada, modelo básico)
+## Parte 4 - Tarefas reais
 
-| | Modelo básico (sem restrição) | Modelo básico (apenas código/resposta) |
+| Tarefa | Critério de aceitação | Modelo previsto | Resultado observado | Consumo e unidade | Aprendizado |
+|---|---|---|---|---|---|
+| 1 | | | | | |
+| 2 | | | | | |
+
+## Opcional - Restrição de saída
+
+- Modelo usado:
+
+| Critério | Sem restrição | Apenas código |
 |---|---|---|
-| Total de tokens | | |
-| Redução de tokens | — | |
+| Passou nos quatro casos do desafio? | | |
+| Respeitou o formato? | | |
+| Tokens de saída | | |
+| Créditos, se disponíveis | | |
 
----
+Houve redução observável? A correção foi preservada?
 
-## Parte 3 — Tabela de decisão
+## Repetições adicionais, se realizadas
 
-| Tarefa | Básico acertou? | Tokens do básico | Premium acertou? | Tokens do premium | Usar qual modelo? |
-|------|---------------|-------------|------------------|----------------|------------------|
-| Parte 1 (fácil) | | | | | |
-| Parte 2 (difícil) | | | | | |
-
-### Respostas
-
-1. Tarefa fácil — melhor custo-benefício (correto + menos tokens)? →
-2. Tarefa difícil — quanto a resposta errada do modelo básico realmente custou? →
-3. Com 10.000 execuções/dia, como sua escolha difere entre a Parte 1 e a Parte 2? →
-4. Como você decide *antecipadamente* se uma tarefa é "fácil → básico" ou "difícil → premium"? →
-
----
-
-## Parte 4 — Classifique suas próprias tarefas
-
-| Sua tarefa | Nível previsto | Melhor nível observado | Previsão correta? |
-|---|---|---|---|
-| 1. | | | |
-| 2. | | | |
+Registre separadamente a quantidade de repetições, as respostas e o consumo de ambos os modelos. Não substitua uma primeira resposta desfavorável por uma tentativa posterior.

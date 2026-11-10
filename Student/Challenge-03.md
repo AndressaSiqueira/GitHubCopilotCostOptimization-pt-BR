@@ -1,188 +1,235 @@
-# Desafio 03 - Seleção de modelos e restrições de saída
+# Desafio 03 - Escolha o modelo adequado e controle o tamanho da resposta
 
 [< Desafio anterior](./Challenge-02.md) - **[Início](../README.md)** - [Próximo desafio >](./Challenge-04.md)
 
-## Introdução
+## O que você vai aprender
 
-Nem toda tarefa precisa do modelo mais poderoso. Na cobrança baseada em uso, o custo **não** é apenas o preço por token do modelo. Ele é:
+Nem toda tarefa exige o mesmo tipo de raciocínio. Ordenar versões de software é diferente de planejar um produto com requisitos incompletos.
 
-> **Custo total = tarifa por token × tokens × tentativas**
+Neste desafio, você vai executar as mesmas tarefas em dois modelos, avaliar os resultados e decidir quando uma opção de menor custo é suficiente e quando vale usar outra com maior capacidade de raciocínio.
 
-Esse último termo — *tentativas* — é o que as pessoas esquecem. Um **modelo básico** que responde corretamente a uma tarefa simples com poucos tokens é uma ótima opção econômica. Mas coloque esse mesmo modelo básico em um trabalho que exige discernimento de verdade e ele entregará uma **resposta aparentemente plausível, porém superficial ou completamente errada** — e você nem sempre perceberá isso imediatamente. Agora você está pagando de novo (e de novo) para perceber a lacuna e refazer o trabalho. O modelo que parecia ter menor custo por solicitação acabou de se tornar o mais caro.
+Ao final, você deverá conseguir:
 
-Neste desafio, você executará o **mesmo prompt em um modelo básico e em um modelo premium** para dois tipos de tarefa muito diferentes. Primeiro, uma tarefa **fácil e verificável**; depois, uma tarefa **aberta**, sem gabarito. Em cada execução, você mede o **resultado** — *ele acertou ou qual é a qualidade da resposta?* — e o **custo de tokens**. A partir desses dados, você desenvolverá a habilidade que é o verdadeiro foco deste desafio: decidir *qual modelo usar para cada trabalho.*
+- Comparar modelos sem mudar o prompt ou o contexto entre as execuções.
+- Avaliar uma resposta objetiva e uma resposta aberta.
+- Distinguir quantidade de texto, uso de tokens e consumo de créditos.
+- Restringir a saída sem remover requisitos importantes.
 
-> **Conceito-chave:** Menor custo por solicitação não é o mesmo que menor custo por *resultado*.
+> **Ideia central:** o melhor custo-benefício é o menor custo para chegar a um resultado aceitável, não necessariamente o menor custo da primeira resposta.
 
-### Por que isso importa para a programação
+## Antes de começar
 
-Este desafio usa um prompt rápido e verificável e um prompt aberto de planejamento para que você vivencie os dois lados dessa relação de custo-benefício. Mas a lição é a mesma que você enfrenta sempre que programa com o Copilot: um agente constantemente **raciocina dentro de uma tarefa** — escolhendo a lógica, ponderando opções e avaliando se sua própria saída é boa. É exatamente aí que um modelo mais fraco fica aquém — às vezes *errado com confiança*, às vezes apenas superficial. A seleção do modelo determina a qualidade desse raciocínio, não apenas se alguma saída é produzida. Escolha o modelo adequado ao *pensamento* que a tarefa exige.
+1. Abra o GitHub Copilot Chat no VS Code.
+2. Escolha dois modelos disponíveis na sua organização:
+   - **Modelo A:** uma opção de menor custo para o seu plano.
+   - **Modelo B:** uma opção com capacidade de raciocínio diferente, que você queira comparar com A.
+3. Registre os nomes e as condições de cobrança exibidas no seu ambiente. Não presuma que um modelo seja gratuito ou tenha um multiplicador específico.
+4. Copie o [modelo de medições](./Resources/Challenge-03-ModelSelection/measurements-template.md) para registrar seus resultados.
 
-## Descrição
+Não é necessário criar uma aplicação. Os [prompts](./Resources/Challenge-03-ModelSelection/prompts.md) e o [guia de restrições de saída](./Resources/Challenge-03-ModelSelection/output-constraints.md) estão na pasta de recursos.
 
-Você executará **duas tarefas**, cada uma em **dois modelos**:
+Se apenas um modelo estiver disponível, acompanhe uma demonstração do instrutor e identifique quais resultados foram demonstrados, em vez de medidos por você.
 
-- Um **modelo básico** — incluído na sua assinatura, sem multiplicador de solicitações premium (por exemplo, GPT-4.1, GPT-4o). Rápido e econômico.
-- Um **modelo premium** — um modelo de ponta / raciocínio cobrado como uma solicitação premium com um multiplicador de custo (por exemplo, GPT-5, Claude Sonnet, um modelo da série o).
+## Prepare uma comparação justa
 
-> Use os modelos de nível básico e premium que sua organização disponibiliza no **seletor de modelos** do GitHub Copilot Chat. Os nomes exatos não importam — o *padrão* importa. O seletor mostra um multiplicador (por exemplo, `1×`) ao lado dos modelos premium; modelos básicos não mostram multiplicador.
+- Use uma conversa nova para cada combinação de modelo e tarefa.
+- Mantenha o mesmo modo do chat, as mesmas instruções e os mesmos anexos. Prefira uma janela sem projeto aberto para não adicionar contexto de código.
+- Não habilite ferramentas externas para estas tarefas.
+- Use exatamente os prompts fornecidos.
+- Na comparação principal, registre apenas a primeira resposta de cada modelo, sem corrigir ou reformular a solicitação.
+- Preserve as respostas para avaliá-las depois.
 
-Para cada execução, registre o **resultado** (correto / incorreto) e o **uso de tokens** (`Exibir → Saída → "GitHub Copilot Chat"`; `View → Output` na interface em inglês, e/ou sua visualização de uso do Copilot). Se seu ambiente não mostrar uma contagem exata de tokens por solicitação, você ainda poderá ver o padrão: o modelo premium produz muito mais texto. Anote *aproximadamente quanto a mais*.
+Você terá quatro execuções principais:
 
-> **Regra — apenas a primeira tentativa:** Execute cada prompt **uma vez** por modelo e registre o que receber. Não oriente, execute novamente ou reformule em busca de um resultado melhor. O objetivo é ver o que cada modelo produz *na primeira tentativa* para cada tipo de tarefa.
+| Execução | Tarefa | Modelo |
+|---|---|---|
+| 1 | Ordenação de versões | A |
+| 2 | Ordenação de versões | B |
+| 3 | Esclarecimento de um produto | A |
+| 4 | Esclarecimento de um produto | B |
 
-> **Uma observação sobre as contagens de tokens:** Os números exatos de tokens variam entre execuções — especialmente nos modelos premium de raciocínio. Concentre-se no **padrão e na proporção**, não no número absoluto. Se um resultado parecer estranho, execute-o de 2 a 3 vezes.
+> **Sem resultado predeterminado:** qualquer um dos modelos pode acertar, errar, perguntar ou produzir uma resposta melhor. O objetivo é analisar o que ocorreu, não comprovar que um modelo sempre vence.
 
 ---
 
-## Parte 1 — Uma tarefa fácil (o modelo básico deve vencer)
+## Parte 1 - Compare uma tarefa objetiva
 
-Forneça este prompt exato a **ambos** os modelos:
+### Etapa 1 - Envie o mesmo prompt aos dois modelos
 
-```
+Em uma nova conversa para cada modelo, envie:
+
+```text
 Ordene estes números de versão de software do mais antigo para o mais recente e liste-os
 em ordem, separados por vírgulas: 1.9.0, 1.10.0, 1.2.0, 1.11.0, 1.9.5
 ```
 
-✅ Resposta correta: `1.2.0, 1.9.0, 1.9.5, 1.10.0, 1.11.0`
+### Etapa 2 - Confira a correção
 
-### Registre
+O gabarito é:
 
-| | Modelo básico | Modelo premium |
-|---|---|---|
-| Correto? | ? | ? |
-| Total de tokens | ? | ? |
-
-### O que observar
-
-Ambos os modelos devem acertar. Agora compare as **contagens de tokens**. O modelo premium frequentemente produz muito mais saída — raciocínio reformulado, explicações — para a *mesma resposta correta*. Em uma tarefa fácil, esse gasto extra não traz nenhum benefício.
-
----
-
-## Parte 2 — Uma tarefa aberta (avalie a *qualidade*, não uma resposta certa)
-
-A Parte 1 tinha uma resposta verificável. **A maior parte do trabalho real não tem.** Quando você planeja uma funcionalidade, projeta um schema ou define o escopo de um projeto com o Copilot, não há gabarito — *você* precisa avaliar se a saída é boa. Esse discernimento é a habilidade que esta parte desenvolve, e é onde a escolha do modelo mais importa.
-
-Forneça este prompt exato a **ambos** os modelos:
-
-```
-Quero construir uma aplicação de pickleball. Produza um plano de implementação.
-Primeiro, faça todas as perguntas de esclarecimento de que precisar. Depois, identifique os
-5 principais riscos ou complexidades ocultas que poderiam inviabilizar este projeto
-e destaque-os no plano.
+```text
+1.2.0, 1.9.0, 1.9.5, 1.10.0, 1.11.0
 ```
 
-Observe que o prompt é **deliberadamente vago** ("uma aplicação de pickleball" — para fazer *o quê*?). Isso é intencional: um modelo forte deve *perceber a lacuna e perguntar* antes de planejar. A pergunta sobre riscos então força o modelo a realmente **pensar**, não apenas preencher um modelo de documento.
+Compare os componentes numéricos de cada versão. Uma ordenação puramente alfabética não resolve a tarefa.
 
-### Registre e avalie
+### Etapa 3 - Registre o resultado
 
-Não há uma resposta correta; portanto, avalie cada resposta com base nestes critérios:
-
-| Critério | Modelo básico | Modelo premium |
+| Critério | Modelo A | Modelo B |
 |---|---|---|
-| Fez perguntas de esclarecimento *antes* de planejar? (quantas, quão pertinentes) | ? | ? |
-| Os 5 principais riscos são genéricos ("aumento descontrolado de escopo, orçamento") ou realmente perspicazes? | ? | ? |
-| O plano é específico de *pickleball* — ou um modelo genérico para "qualquer aplicação"? | ? | ? |
-| Você confiaria nele o suficiente para começar a construir? | ? | ? |
-| Total de tokens | ? | ? |
+| Acertou a ordem? | | |
+| Respeitou o formato pedido? | | |
+| Tokens de entrada, se disponíveis | | |
+| Tokens de saída, se disponíveis | | |
+| Créditos atribuíveis à execução, se disponíveis | | |
+| Tempo aproximado de resposta | | |
 
-### O que observar
-
-O modelo básico tende a **seguir em frente sem parar**: ele presume o que é a aplicação, produz um plano plausível, porém genérico, e lista riscos genéricos (orçamento, cronograma, aumento descontrolado de escopo). Raramente para para perguntar o que você está realmente construindo.
-
-O modelo premium tem maior probabilidade de **fazer perguntas pertinentes de esclarecimento primeiro** (reserva de quadras? combinação de jogadores/ranking? acompanhamento de placares? agendamento de ligas? quem são os usuários?) e de revelar **riscos mais profundos e específicos do domínio** — reservas duplicadas / concorrência nas reservas de quadras, justiça do ranking, sincronização de placares em tempo real, privacidade da geolocalização, tratamento de ausências e cancelamentos. Esses são exatamente os riscos que comprometem um projeto silenciosamente.
-
-> **A relação com o custo:** o plano premium custa mais tokens inicialmente. Mas um plano superficial não é barato — é um **custo adiado.** Cada risco que o modelo básico *não* sinalizou se torna retrabalho, uma reescrita ou um bug pelo qual você paga na execução — mais *tentativas* para chegar a algo que realmente possa construir. Em trabalhos abertos de alto impacto, pagar mais por um *pensamento mais profundo* costuma ser a escolha econômica — o inverso da Parte 1, em que pagar mais não trouxe nenhum benefício.
-
-### Perguntas a responder
-
-1. No plano de qual modelo você realmente confiaria o suficiente para começar a construir — e por quê?
-2. Os tokens extras gastos pelo modelo premium trouxeram valor real aqui (ao contrário da Parte 1)? O que, especificamente?
-3. Esta tarefa não tem uma "resposta certa". Como você decidiu qual saída era *melhor*? O que fez a diferença?
+Se ambos acertarem, compare o consumo observado e o tempo. Uma explicação longa não agrega necessariamente valor a uma tarefa que pediu apenas uma lista.
 
 ---
 
-## Parte 3 — Compare os resultados e decida
+## Parte 2 - Compare uma tarefa aberta
 
-Reúna suas medições em uma tabela:
+Nesta parte, não há um único gabarito. Você avaliará como cada modelo lida com uma ideia que ainda precisa de esclarecimentos.
 
-| Tarefa | Básico: resultado | Básico: tokens | Premium: resultado | Premium: tokens | Qual modelo você deve usar? |
-|------|---------------|--------------|------------------|-----------------|-----------------------------|
-| Parte 1 (fácil, verificável) | correto? | ? | correto? | ? | ? |
-| Parte 2 (aberta) | avalie a qualidade | ? | avalie a qualidade | ? | ? |
+### Etapa 1 - Envie o mesmo prompt aos dois modelos
 
-### Perguntas a responder
+```text
+Quero construir uma aplicação de pickleball, um esporte de raquete.
 
-1. Na tarefa **fácil**, qual modelo ofereceu o melhor *custo-benefício* (resposta correta, menos tokens)?
-2. Na tarefa **aberta**, os tokens extras do modelo premium trouxeram algo real — profundidade, perguntas de esclarecimento, riscos que o modelo básico não percebeu?
-3. Se você executasse a tarefa **fácil** **10,000 vezes por dia**, qual modelo escolheria e quanto a escolha errada custaria?
-4. Como você decidiria, *antes* de executar uma tarefa, se ela é uma tarefa da "Parte 1" (bem definida → básico) ou da "Parte 2" (aberta, exige muito discernimento → premium)?
+Antes de propor uma solução, faça no máximo 5 perguntas para esclarecer
+o público, o objetivo principal e as regras do produto.
 
----
+Não invente minhas respostas. Aguarde minhas respostas antes de produzir
+um plano de implementação.
 
-## Parte 4 — Classifique suas próprias tarefas
+Também identifique 5 riscos ou complexidades que precisam ser investigados.
+Se um risco depender de uma funcionalidade ainda não confirmada, deixe essa
+condição explícita.
+```
 
-A habilidade que este desafio desenvolve é a *previsão*: saber de qual nível uma tarefa precisa **antes** de gastar qualquer coisa.
+O prompt separa duas coisas: **investigar o problema agora** e **planejar depois de receber respostas**.
 
-1. Anote **duas tarefas reais** do seu próprio trabalho — uma que você acha que um modelo básico consegue realizar e outra que você acha que precisa de um modelo premium.
-2. Para cada uma, preveja o nível e **por quê** (Ela é bem definida ou precisa de raciocínio em várias etapas / discernimento?).
-3. Execute cada tarefa em **ambos** os níveis e verifique sua previsão. Você acertou? Anote quaisquer surpresas.
+### Etapa 2 - Avalie apenas a primeira resposta
 
-| Sua tarefa | Nível previsto | Melhor nível observado | Sua previsão estava certa? |
+Não responda às perguntas durante a comparação principal. O plano completo não é uma entrega desta etapa.
+
+Use a mesma escala para os dois modelos:
+
+- **0:** não atendeu ao critério.
+- **1:** atendeu parcialmente, com lacunas importantes.
+- **2:** atendeu de forma clara e útil.
+
+| Critério | O que observar | A (0 a 2) | B (0 a 2) |
 |---|---|---|---|
-| 1. | | | |
-| 2. | | | |
+| Respeito às instruções | Fez até 5 perguntas e aguardou antes de planejar? | | |
+| Utilidade das perguntas | Esclareceu quem usa o produto, para quê e com quais regras? | | |
+| Tratamento de incerteza | Evitou assumir funcionalidades como requisitos confirmados? | | |
+| Qualidade dos riscos | Apresentou 5 riscos concretos, em vez de apenas “prazo” e “orçamento”? | | |
+| Relação com o domínio | Relacionou os riscos às possíveis atividades de pickleball? | | |
+| **Total** | **Máximo de 10 pontos** | | |
+
+Por exemplo, conflitos de reserva só fazem sentido **se houver reserva de quadras**. O modelo deve explicitar essa condição, não decidir sozinho que o produto terá reservas.
+
+Mais perguntas, mais palavras ou mais termos técnicos não significam automaticamente mais qualidade. Justifique suas notas citando trechos das respostas.
+
+### Etapa 3 - Registre o consumo separadamente
+
+Anote tokens, créditos e tempo quando disponíveis. Uma nota de qualidade maior pode justificar maior consumo, mas isso precisa ser explicado a partir da resposta, não do nome do modelo.
+
+> Uma única resposta não mede a confiabilidade geral de um modelo. Se quiser repetir o experimento, faça o mesmo número de repetições para ambos, em conversas novas, e mantenha esses resultados separados da primeira rodada.
 
 ---
 
-## Opcional — Restrições de saída
+## Parte 3 - Decida com base nas evidências
 
-Tokens de saída geralmente custam mais que tokens de entrada, e restringir o que um modelo *produz* é uma alavanca que você controla em **todos** os modelos.
+Reúna os resultados:
 
-Escolha uma tarefa em que o modelo seja **detalhado por padrão** — por exemplo, pedir uma pequena função:
+| Tarefa | Resultado de A | Consumo de A | Resultado de B | Consumo de B | Qual escolheria e por quê? |
+|---|---|---|---|---|---|
+| Ordenação de versões | | | | | |
+| Esclarecimento do produto | | | | | |
 
+Indique a unidade de consumo em cada célula: tokens de saída, tokens totais informados ou créditos. Não misture unidades como se fossem equivalentes.
+
+### Como interpretar o custo
+
+O custo total de uma tarefa inclui todas as interações necessárias para concluí-la, inclusive esclarecimentos, correções e novas tentativas.
+
+Na cobrança por uso, tokens de entrada, saída e cache podem ter tarifas diferentes. Por isso:
+
+- Não estime tokens contando palavras ou comparando visualmente o tamanho das respostas.
+- Não use a ocupação da janela de contexto como se fosse o total faturado.
+- Não converta tokens em créditos sem as tarifas aplicáveis ao modelo e ao seu plano.
+- Se não houver medição por execução, escreva **“não disponível”**. Ainda é possível comparar correção e qualidade.
+
+Se houver créditos individualizados, o consumo de uma rodada é a soma dos créditos das suas interações. O tempo de revisão humana também deve ser considerado na decisão, mas registrado separadamente.
+
+Responda:
+
+1. Qual modelo entregou uma resposta aceitável com menor consumo medido em cada tarefa?
+2. Se faltarem métricas, o que você consegue concluir e o que permanece desconhecido?
+3. Que tipo de erro exigiria mais revisão ou retrabalho no seu contexto?
+4. O resultado sustenta uma escolha para esta tarefa ou uma afirmação geral sobre todos os modelos?
+
+---
+
+## Parte 4 - Aplique a comparação ao seu trabalho
+
+Escolha duas tarefas reais que você possa compartilhar sem expor dados sensíveis:
+
+- Uma tarefa bem definida, com resultado verificável.
+- Uma tarefa com ambiguidade ou necessidade de avaliar alternativas.
+
+Antes de executar, registre sua previsão. Depois, use o mesmo prompt nos dois modelos e avalie a saída com critérios definidos antecipadamente.
+
+| Tarefa | Critério de aceitação | Modelo previsto | Melhor resultado observado | O que você aprendeu? |
+|---|---|---|---|---|
+| 1 | | | | |
+| 2 | | | | |
+
+Não é necessário escolher um vencedor quando os dados forem insuficientes ou os resultados equivalentes.
+
+---
+
+## Opcional - Reduza a saída sem perder correção
+
+Escolha um dos modelos e execute os prompts abaixo em duas conversas novas.
+
+**Sem restrição de formato:**
+
+```text
+Escreva uma função Python chamada is_palindrome(text: str) -> bool.
+Compare a string exatamente como recebida, diferenciando maiúsculas,
+espaços e pontuação. Considere a string vazia um palíndromo.
 ```
-Escreva uma função Python que verifique se uma string é um palíndromo.
+
+**Com restrição de formato:**
+
+```text
+Escreva uma função Python chamada is_palindrome(text: str) -> bool.
+Compare a string exatamente como recebida, diferenciando maiúsculas,
+espaços e pontuação. Considere a string vazia um palíndromo.
+Retorne apenas o código, sem explicação e sem blocos delimitados de Markdown.
 ```
 
-Execute-a no modelo básico e, em seguida, execute-a novamente com uma restrição de saída adicionada:
+Confira nas duas versões: `"ovo"` e `""` devem resultar em `True`; `"Ovo"` e `"python"`, em `False`.
 
-```
-Escreva uma função Python que verifique se uma string é um palíndromo.
-Retorne apenas o código. Sem explicação, sem blocos delimitados de Markdown.
-```
-
-Registre a diferença de tokens. Restringir a saída — "apenas código", "apenas a resposta", "explique em menos de 50 palavras", um schema JSON — reduz o custo mantendo o resultado correto.
-
-> Observação: as restrições reduzem os tokens de **saída**. Elas ajudam mais quando o modelo, sem elas, encheria a resposta de explicações. Elas **não** transformam uma resposta superficial em uma boa resposta (veja a Parte 2) e têm pouco efeito quando a saída já é concisa ou quando os tokens ocultos de "pensamento" de um modelo de raciocínio predominam.
+Compare os tokens de saída, se disponíveis, e o respeito ao formato. Não presuma que o código será idêntico nem que a restrição sempre reduzirá o custo total. Ela não elimina necessariamente processamento interno ou chamadas adicionais.
 
 ## Critérios de sucesso
 
-Para concluir este desafio com sucesso, você deve ser capaz de:
-
-- Executar o mesmo prompt em um modelo básico e em um modelo premium para ambas as tarefas
-- Registrar o resultado (correto/incorreto ou nota de qualidade) e o uso de tokens das quatro execuções
-- Mostrar que, na tarefa fácil, o modelo básico acertou **e** usou menos tokens
-- Na tarefa aberta de planejamento, avaliar a *qualidade* de cada modelo segundo os critérios (perguntas de esclarecimento, profundidade dos 5 principais riscos, especificidade, confiança para começar) e explicar a partir de qual plano você construiria
-- Classificar duas tarefas reais do seu próprio trabalho por nível e verificar sua previsão
-- (Opcional) Demonstrar uma redução de tokens adicionando uma restrição de saída a uma tarefa com resposta detalhada
+- [ ] Registrei os modelos e mantive prompt, modo e contexto equivalentes.
+- [ ] Executei as quatro combinações principais em conversas novas.
+- [ ] Conferi a ordenação pelo gabarito, incluindo o formato da resposta.
+- [ ] Avaliei a tarefa aberta com a mesma escala e evidências para ambos os modelos.
+- [ ] Registrei métricas disponíveis sem estimar tokens a partir do tamanho do texto.
+- [ ] Justifiquei minhas escolhas sem pressupor que um modelo precisa vencer.
+- [ ] Comparei duas tarefas reais e revi minhas previsões.
+- [ ] Se fiz a etapa opcional, conferi a correção das duas funções.
 
 ## Recursos de aprendizagem
 
-- [Guia de seleção de modelos do GitHub Copilot](https://docs.github.com/en/copilot)
-- [Engenharia de prompts: técnicas de formatação de saída](https://www.promptingguide.ai/)
-- [Cobrança baseada em uso do GitHub Copilot](https://docs.github.com/en/copilot/concepts/billing/usage-based-billing-for-organizations-and-enterprises)
-
-## Dicas
-
-- Custo = tarifa por token × tokens × **tentativas**. Uma resposta *errada* cujo erro você precisa investigar é a opção mais cara.
-- O modelo básico é ótimo para trabalhos bem definidos e com pouca ambiguidade — e é um desperdício *evitá-lo* nesses casos.
-- O modelo premium justifica seu multiplicador em tarefas que precisam de raciocínio real, nas quais uma primeira resposta errada custa caro.
-- Restrições de saída reduzem o custo em *qualquer* modelo — peça apenas a resposta quando não precisar de explicações.
-- O melhor modelo não é o mais inteligente — é aquele que retorna uma resposta *correta* pelo menor custo total.
-
-## Perguntas para reflexão
-
-1. Descreva uma tarefa real do seu próprio trabalho que seja uma tarefa da "Parte 1". Qual modelo você usaria e por quê?
-2. Descreva uma tarefa real da "Parte 2" — aberta, que exige muito discernimento. Como você justificaria o multiplicador premium para sua equipe?
-3. Como você poderia combinar modelos básicos e premium em um único fluxo de trabalho para minimizar o custo total (por exemplo, o modelo básico cria rascunhos e o premium revisa)?
+- [Documentação do GitHub Copilot e modelos disponíveis](https://docs.github.com/en/copilot)
+- [Cobrança baseada em uso para organizações e empresas](https://docs.github.com/en/copilot/concepts/billing-and-usage/organizations-and-enterprises/billing)
+- [Recursos deste desafio](./Resources/Challenge-03-ModelSelection/README.md)

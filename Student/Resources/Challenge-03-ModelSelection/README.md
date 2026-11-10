@@ -1,31 +1,24 @@
-# Desafio 03 — Seleção de modelos — Recursos
+# Desafio 03 - Recursos para comparar modelos
 
-Esta pasta contém tudo de que você precisa para o Desafio 03. **Não há uma base de código para executar** —
-o desafio consiste em enviar dois prompts curtos a dois modelos diferentes e medir o que
-é retornado.
-
-## O que há aqui
+Estes materiais acompanham o [Desafio 03](../../Challenge-03.md). Não há uma aplicação para executar: você vai comparar respostas de dois modelos a uma tarefa objetiva e a uma tarefa aberta.
 
 | Arquivo | Finalidade |
 |---|---|
-| `prompts.md` | Os dois prompts exatos (fácil + difícil) e suas respostas corretas |
-| `measurements-template.md` | Tabelas em branco para registrar o resultado + tokens de cada execução |
-| `output-constraints.md` | Guia rápido de restrições de saída para reduzir o custo de tokens |
+| [prompts.md](./prompts.md) | Prompts idênticos aos do desafio e orientação de avaliação |
+| [measurements-template.md](./measurements-template.md) | Registro dos modelos, métricas e decisões |
+| [output-constraints.md](./output-constraints.md) | Experimento opcional de restrição de saída |
 
-## Como realizar o desafio (VS Code + GitHub Copilot Chat)
+## Como usar
 
-1. Abra o GitHub Copilot Chat no VS Code. Inicie uma **nova conversa para cada par modelo/prompt**.
-2. Use o **seletor de modelos** para selecionar um modelo de menor custo disponível para sua organização.
-3. Cole um prompt de `prompts.md` exatamente como está escrito. Registre a resposta e o uso de tokens medido.
-4. Inicie outra **nova conversa**, selecione um modelo mais forte e execute o **mesmo** prompt.
-   Mantenha os anexos e as instruções idênticos aos da primeira execução. Registre a resposta e o uso de tokens medido.
-5. Repita esse procedimento para ambos os prompts, usando uma nova conversa para cada execução.
-6. Preencha `measurements-template.md` e responda às perguntas da Parte 3; depois, faça o exercício
-   "classifique suas próprias tarefas" da Parte 4.
+1. Escolha dois modelos disponíveis e registre os nomes e as condições de cobrança.
+2. Abra uma conversa nova para cada combinação de modelo e tarefa.
+3. Mantenha o mesmo modo, instruções e anexos nas duas execuções de cada tarefa.
+4. Envie exatamente o prompt fornecido, sem ferramentas externas.
+5. Preserve apenas a primeira resposta na comparação principal, sem enviar correções.
+6. Preencha o registro com as métricas realmente disponíveis.
+7. Compare a correção da ordenação e a qualidade do esclarecimento do produto.
+8. Aplique o mesmo método a duas tarefas reais e, se desejar, faça a etapa opcional.
 
-> **Regra:** Não tente novamente nem oriente o modelo básico quando ele errar a tarefa difícil. Uma
-> primeira resposta errada é um resultado válido — e importante. Em vez disso, você refletirá sobre o custo de tentar novamente
-> na Parte 2.
+Na tarefa aberta, o modelo deve perguntar e aguardar antes de planejar. Não responda às perguntas durante a rodada principal.
 
-> **Se seu seletor mostrar apenas um nível:** pergunte ao instrutor quais modelos correspondem a "básico" e
-> "premium" na sua organização ou use os números de referência do instrutor como demonstração.
+Não estime tokens a partir da quantidade de texto nem trate um modelo como vencedor antecipado. Se faltar uma métrica, registre “não disponível”. Se houver apenas um modelo disponível, acompanhe uma demonstração do instrutor e identifique-a como tal.

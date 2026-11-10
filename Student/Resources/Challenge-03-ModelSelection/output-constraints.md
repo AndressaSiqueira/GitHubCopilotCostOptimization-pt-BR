@@ -1,38 +1,38 @@
-# Restrições de saída — Guia rápido
+# Restrições de saída - Peça o formato de que você precisa
 
-Tokens de saída geralmente custam mais que tokens de entrada. Restringir o que o modelo *produz* é
-uma alavanca de custo que você controla em **todos** os modelos. Use estes padrões quando não precisar de explicações.
+Uma restrição de saída orienta como o modelo deve apresentar a resposta. Ela pode reduzir explicações desnecessárias, mas não garante correção, formato válido ou economia.
 
-| Objetivo | Adicione ao seu prompt | Efeito |
+## Padrões úteis
+
+| Objetivo | Exemplo de instrução | O que conferir |
 |---|---|---|
-| Apenas a resposta | "Responda apenas com o número/valor, nada mais." | Remove o raciocínio reformulado + preâmbulo |
-| Apenas código | "Retorne apenas o código. Sem explicação, sem blocos delimitados de Markdown." | Elimina os parágrafos de "Veja como funciona..." |
-| Limitar o detalhamento | "Explique em 50 palavras ou menos." | Limite rígido para o tamanho da saída |
-| Saída estruturada | "Responda em JSON no formato: `{ \"result\": number }`" | Evita divagações; fácil de interpretar |
-| Sem reformulação | "Não repita a pergunta nem resuma a tarefa." | Remove a repetição da entrada |
-| Lista limitada | "Liste no máximo 3 itens." | Impede a geração excessiva |
+| Apenas um valor | “Responda somente com o número.” | O valor continua correto? |
+| Apenas código | “Retorne apenas o código, sem explicação ou Markdown.” | O código atende aos requisitos? |
+| Explicação curta | “Explique em até 50 palavras.” | O limite foi respeitado sem omitir algo essencial? |
+| JSON | “Retorne JSON com as propriedades `count` e `events`.” | O JSON é válido e segue o contrato? |
+| Lista curta | “Liste no máximo 3 itens.” | Os itens são suficientes para a tarefa? |
+| Evitar repetição | “Não repita o enunciado.” | A resposta continua compreensível? |
 
-## Por que isso importa
+Essas instruções não são limites técnicos rígidos: a saída ainda precisa de validação.
 
-Um modelo que recebe uma pergunta para a qual normalmente daria uma *explicação* gastará a maioria de seus tokens explicando uma
-resposta em que você já confia. A restrição mantém a correção e reduz o custo. O efeito é
-maior nas tarefas com **respostas detalhadas por padrão** (por exemplo, "escreva uma função") — nelas, sem a restrição, o modelo
-envolve a resposta em explicações e Markdown.
+## Experimento do Desafio 03
 
-## Experimente
+Use as duas variantes da função `is_palindrome` disponíveis em [prompts.md](./prompts.md). Elas possuem os mesmos requisitos funcionais; a segunda acrescenta apenas a restrição de formato.
 
-Escolha uma tarefa com resposta detalhada no modelo básico e execute-a novamente com uma restrição de saída acrescentada:
+1. Escolha um único modelo.
+2. Abra uma conversa nova para cada variante.
+3. Confira os quatro casos de aceitação.
+4. Registre tokens de saída e créditos, se disponíveis.
+5. Compare a utilidade e o consumo das respostas.
 
-```
-Escreva uma função Python que verifique se uma string é um palíndromo.
-Retorne apenas o código. Sem explicação, sem blocos delimitados de Markdown.
-```
+Não presuma que as duas versões produzirão código idêntico. O objetivo é verificar se a resposta restrita preserva o comportamento exigido.
 
-Compare o total de tokens — o código é idêntico, o custo é muito menor.
+## Limites da técnica
 
-> Observações:
-> - As restrições reduzem os tokens de **saída**. Elas têm pouco efeito quando a saída já é concisa
->   (por exemplo, uma resposta de uma linha) ou quando os tokens ocultos de "pensamento" de um modelo de raciocínio predominam.
-> - As restrições **não** corrigem um modelo que está *errado* (veja a Parte 2). Para uma tarefa que o modelo básico
->   não consegue resolver com raciocínio, uma restrição apenas fornece uma resposta errada mais rápido — a seleção do modelo,
->   e não o formato da saída, é a solução nesse caso.
+- Menos texto visível não mede necessariamente todo o processamento interno.
+- A restrição não reduz automaticamente tokens de entrada ou chamadas de ferramentas.
+- As tarifas de entrada, saída e cache podem diferir conforme o modelo e o plano.
+- Uma resposta curta e incorreta não é uma otimização.
+- Em tarefas abertas, explicações e alertas podem ser parte importante da entrega.
+
+Consulte o [Desafio 03](../../Challenge-03.md) para os critérios de comparação e registre os resultados no [modelo de medições](./measurements-template.md).
